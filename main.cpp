@@ -1,91 +1,134 @@
-#include "RtAudio.h"
-#include <iostream>
-#include <cstdlib>
-#include <stdexcept>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_audio.h>
+#include <queue>
+#include <cmath>
 
-void error_callback(RtAudioError::Type type, const std::string &error_text)
+const int AMPLITUDE = 28000;
+const int FREQUENCY = 44100;
+
+struct BeepObject
 {
-	if (type == RtAudioError::WARNING)
-		printf("%sWarning: %s%s\n", "\x1b[33m", error_text.c_str(), "\x1b[30m");
-	else if (type != RtAudioError::WARNING)
-		throw std::runtime_error(error_text);
+    double freq;
+    int samplesLeft;
+};
+
+class Beeper
+{
+private:
+    double v;
+    std::queue<BeepObject> beeps;
+public:
+    Beeper();
+    ~Beeper();
+    void beep(double freq, int duration);
+    void generateSamples(Sint16 *stream, int length);
+    void wait();
+};
+
+void audio_callback(void*, Uint8*, int);
+
+Beeper::Beeper()
+{
+    SDL_AudioSpec desiredSpec;
+
+    desiredSpec.freq = FREQUENCY;
+    desiredSpec.format = AUDIO_S16SYS;
+    desiredSpec.channels = 1;
+    desiredSpec.samples = 2048;
+    desiredSpec.callback = audio_callback;
+    desiredSpec.userdata = this;
+
+    SDL_AudioSpec obtainedSpec;
+
+    // you might want to look for errors here
+    SDL_OpenAudio(&desiredSpec, &obtainedSpec);
+
+    // start play audio
+    SDL_PauseAudio(0);
 }
 
-int saw(void *out_buffer, void *in_buffer, unsigned int buffer_frames,
-		double streamTime, RtAudioStreamStatus status, void *data)
+Beeper::~Beeper()
 {
-	extern const unsigned int channels;
-	double *buffer = (double*)out_buffer;
-	double *lastValues = (double*)data;
-
-	if (status) {
-		std::cout << "Stream underflow detected!" << std::endl;
-		return 1;
-	}
-
-	for (unsigned int i = 0; i < buffer_frames; i++) {
-		for (unsigned int j = 0; j < channels; j++) {
-			*buffer++ = lastValues[j];
-
-			lastValues[j] += 0.005*(j + 1 + (j*0.1));
-			if (lastValues[j] >= 1.0)
-				lastValues[j] -= 2.0;
-		}
-	}
-
-	return 0;
+    SDL_CloseAudio();
 }
 
-const unsigned int channels = 2;
-RtAudio::StreamOptions options;
-
-int main(int argc, char *argv[])
+void Beeper::generateSamples(Sint16 *stream, int length)
 {
-	RtAudio dac;
-	double *data = new double [channels];
+    int i = 0;
+    while (i < length) {
 
-	try {
-		if (dac.getDeviceCount() < 1)
-			throw std::runtime_error("No audio devices found!");
-		dac.showWarnings(true);
+        if (beeps.empty()) {
+            while (i < length) {
+                stream[i] = 0;
+                i++;
+            }
+            return;
+        }
+        BeepObject& bo = beeps.front();
 
-		unsigned int buffer_frames,
-					 freq = 44100,
-					 offset = 0;
+        int samplesToDo = std::min(i + bo.samplesLeft, length);
+        bo.samplesLeft -= samplesToDo - i;
 
-		buffer_frames = 512;
-		RtAudio::StreamParameters params;
-		params.deviceId = 2;
-		params.nChannels = channels;
-		params.firstChannel = offset;
+        while (i < samplesToDo) {
+            stream[i] = AMPLITUDE * std::sin(v * 2 * M_PI / FREQUENCY);
+            i++;
+            v += bo.freq;
+        }
 
-		options.flags = RTAUDIO_HOG_DEVICE | RTAUDIO_SCHEDULE_REALTIME;
+        if (bo.samplesLeft == 0) {
+            beeps.pop();
+        }
+    }
+}
 
-		dac.openStream(&params, NULL, RTAUDIO_FLOAT64, freq, &buffer_frames,
-				&saw, (void*)data, &options, &error_callback);
-		dac.startStream();
+void Beeper::beep(double freq, int duration)
+{
+    BeepObject bo;
+    bo.freq = freq;
+    bo.samplesLeft = duration * FREQUENCY / 1000;
 
-		printf("Stream latency = %ld\n", dac.getStreamLatency());
-		printf("Playing... press <enter> to quit (buffer size = %d).\n",
-				buffer_frames);
-		char input;
-		std::cin.get(input);
+    SDL_LockAudio();
+    beeps.push(bo);
+    SDL_UnlockAudio();
+}
 
-		dac.stopStream();
-	} catch (RtAudioError& e) {
-		e.printMessage();
-	} catch (std::bad_alloc &e) {
-		printf("%sMemory Allocation Error: %s%s\n", "\x1b[31m", e.what(),
-				"\x1b[30m");
-	} catch (std::exception &e) {
-		printf("%sError: %s%s\n", "\x1b[31m", e.what(), "\x1b[30m");
-	}
+void Beeper::wait()
+{
+    int size;
+    do {
+        SDL_Delay(20);
+        SDL_LockAudio();
+        size = beeps.size();
+        SDL_UnlockAudio();
+    } while (size > 0);
 
-	if (dac.isStreamOpen())
-		dac.closeStream();
+}
 
-	delete data;
+void audio_callback(void *_beeper, Uint8 *_stream, int _length)
+{
+    Sint16 *stream = (Sint16*) _stream;
+    int length = _length / 2;
+    Beeper* beeper = (Beeper*) _beeper;
 
-	return 0;
+    beeper->generateSamples(stream, length);
+}
+
+int main(int argc, char* argv[])
+{
+    SDL_Init(SDL_INIT_AUDIO);
+
+    int duration = 400;
+
+    Beeper b;
+    b.beep(100, duration);
+    b.beep(200, duration);
+    b.beep(300, duration);
+    b.beep(400, duration);
+    b.beep(500, duration);
+    b.wait();
+
+	SDL_Quit();
+
+    return 0;
 }
 
