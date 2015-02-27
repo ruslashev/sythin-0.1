@@ -1,134 +1,50 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_audio.h>
-#include <queue>
-#include <cmath>
+#include <math.h>
 
-const int AMPLITUDE = 28000;
-const int FREQUENCY = 44100;
+const int Amplitude = 28000;
+const int Frequency = 44100;
+unsigned int time;
+int total_length;
 
-struct BeepObject
+void audio_callback(void *userdata, Uint8 *stream, int length)
 {
-    double freq;
-    int samplesLeft;
-};
-
-class Beeper
-{
-private:
-    double v;
-    std::queue<BeepObject> beeps;
-public:
-    Beeper();
-    ~Beeper();
-    void beep(double freq, int duration);
-    void generateSamples(Sint16 *stream, int length);
-    void wait();
-};
-
-void audio_callback(void*, Uint8*, int);
-
-Beeper::Beeper()
-{
-    SDL_AudioSpec desiredSpec;
-
-    desiredSpec.freq = FREQUENCY;
-    desiredSpec.format = AUDIO_S16SYS;
-    desiredSpec.channels = 1;
-    desiredSpec.samples = 2048;
-    desiredSpec.callback = audio_callback;
-    desiredSpec.userdata = this;
-
-    SDL_AudioSpec obtainedSpec;
-
-    // you might want to look for errors here
-    SDL_OpenAudio(&desiredSpec, &obtainedSpec);
-
-    // start play audio
-    SDL_PauseAudio(0);
+	Sint16 *buffer = (Sint16*)stream;
+	length /= 2;
+	for (int i = 0; i < length; i++) {
+		buffer[i] = Amplitude * sin(2*M_PI*time);
+		time++;
+	}
+	total_length -= length;
 }
 
-Beeper::~Beeper()
+int main()
 {
-    SDL_CloseAudio();
-}
+	SDL_Init(SDL_INIT_AUDIO);
 
-void Beeper::generateSamples(Sint16 *stream, int length)
-{
-    int i = 0;
-    while (i < length) {
+	SDL_AudioSpec desired, obtained;
 
-        if (beeps.empty()) {
-            while (i < length) {
-                stream[i] = 0;
-                i++;
-            }
-            return;
-        }
-        BeepObject& bo = beeps.front();
+	desired.freq = Frequency;
+	desired.format = AUDIO_S16SYS;
+	desired.channels = 1;
+	desired.samples = 4096;
+	desired.callback = audio_callback;
 
-        int samplesToDo = std::min(i + bo.samplesLeft, length);
-        bo.samplesLeft -= samplesToDo - i;
+	SDL_OpenAudio(&desired, &obtained);
 
-        while (i < samplesToDo) {
-            stream[i] = AMPLITUDE * std::sin(v * 2 * M_PI / FREQUENCY);
-            i++;
-            v += bo.freq;
-        }
+	printf("Frequency: %d\nSamples: %d\n", obtained.freq, obtained.samples*2);
 
-        if (bo.samplesLeft == 0) {
-            beeps.pop();
-        }
-    }
-}
+	total_length = Frequency*2;
+	time = 0;
 
-void Beeper::beep(double freq, int duration)
-{
-    BeepObject bo;
-    bo.freq = freq;
-    bo.samplesLeft = duration * FREQUENCY / 1000;
+	SDL_PauseAudio(0);
 
-    SDL_LockAudio();
-    beeps.push(bo);
-    SDL_UnlockAudio();
-}
+	while (total_length > 0)
+		SDL_Delay(100);
 
-void Beeper::wait()
-{
-    int size;
-    do {
-        SDL_Delay(20);
-        SDL_LockAudio();
-        size = beeps.size();
-        SDL_UnlockAudio();
-    } while (size > 0);
-
-}
-
-void audio_callback(void *_beeper, Uint8 *_stream, int _length)
-{
-    Sint16 *stream = (Sint16*) _stream;
-    int length = _length / 2;
-    Beeper* beeper = (Beeper*) _beeper;
-
-    beeper->generateSamples(stream, length);
-}
-
-int main(int argc, char* argv[])
-{
-    SDL_Init(SDL_INIT_AUDIO);
-
-    int duration = 400;
-
-    Beeper b;
-    b.beep(100, duration);
-    b.beep(200, duration);
-    b.beep(300, duration);
-    b.beep(400, duration);
-    b.beep(500, duration);
-    b.wait();
-
+	SDL_CloseAudio();
 	SDL_Quit();
 
-    return 0;
+	return 0;
 }
 
