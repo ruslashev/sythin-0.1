@@ -1,7 +1,7 @@
 CXX = clang++
 OBJS = $(patsubst %.cpp, .objs/%.o, $(shell find . -type f -name '*.cpp' ))
 CXXFLAGS = -Wall -Werror -g -std=c++0x
-LDFLAGS = -lSDL
+LDFLAGS = -lSDL2
 EXECNAME = sythin
 
 all: objdir $(EXECNAME)
