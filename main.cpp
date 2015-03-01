@@ -1,42 +1,22 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_audio.h>
 #include <math.h>
 #include "audio_master.hpp"
+#include "gui.hpp"
 
 int main()
 {
-	SDL_Init(SDL_INIT_AUDIO);
+	try {
+		GUI gui;
 
-	const int RequestedFrequency = 44100;
-	const int RequestedSamples = 4096;
-	AudioMaster audio_master(RequestedFrequency, RequestedSamples);
+		const int RequestedFrequency = 100500;
+		const int RequestedSamples = 4096;
+		AudioMaster audio_master(RequestedFrequency, RequestedSamples);
 
-	SDL_PauseAudio(0);
-
-	SDL_Event event;
-	bool running = true;
-	while (running) {
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_KEYDOWN:
-					switch (event.key.keysym.sym) {
-						case SDLK_ESCAPE:
-							running = false;
-							break;
-						default: break;
-					}
-					break;
-				case SDL_QUIT:
-					running = false;
-					break;
-			}
-			SDL_Delay(1);
-		}
-		SDL_Delay(1);
+		// audio_master.Unpause();
+		gui.MainLoop();
+	} catch (std::exception &e) {
+		printf("Error: %s\n", e.what());
+		return 1;
 	}
-
-	SDL_CloseAudio();
-	SDL_Quit();
 
 	return 0;
 }
