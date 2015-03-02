@@ -25,6 +25,7 @@ callgrind: objdir $(EXECNAME)
 objdir:
 	@mkdir -p .objs
 	@mkdir -p .objs/opengl
+	@mkdir -p .objs/imgui
 
 clean:
 	-rm -f $(EXECNAME)

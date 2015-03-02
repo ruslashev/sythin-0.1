@@ -1,54 +1,5 @@
 #include "gui.hpp"
 
-void OpenGL::Construct()
-{
-	glewExperimental = GL_TRUE;
-	GLenum glewstatus = glewInit();
-	if (glewstatus != GLEW_OK)
-		errorf((const char*)glewGetErrorString(glewstatus));
-
-	initResources();
-}
-
-void OpenGL::initResources()
-{
-	vao.Construct();
-
-	std::vector<GLfloat> vertices;
-	for (int i = 0; i < 100; i++) {
-		float a = (float)i/100.f,
-			  x = a*2 - 1,
-			  y = sin(a*M_PI*2);
-		printf(" %d %d, %f %f\n",
-				x >= -.5 && x <= .5,
-				y >= -.5 && y <= .5,
-				x,
-				y);
-		vertices.push_back(x);
-		vertices.push_back(y);
-	}
-	vertex_buffer.Construct();
-	vertex_buffer.Upload(vertices);
-
-	shader_vert.Construct("shader.vs", GL_VERTEX_SHADER);
-	shader_frag.Construct("shader.fs", GL_FRAGMENT_SHADER);
-
-	shader_program.Construct(&shader_vert, &shader_frag);
-	shader_program.BindAttribute(&vertex_buffer, "position",
-			2, GL_FLOAT, GL_FALSE, 0, 0);
-}
-
-void OpenGL::Update(unsigned int dt, unsigned int t)
-{
-}
-
-void OpenGL::Draw()
-{
-	glClearColor(0, 0, 0, 1);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_LINE_STRIP, 0, 100);
-}
-
 GUI::GUI()
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0)

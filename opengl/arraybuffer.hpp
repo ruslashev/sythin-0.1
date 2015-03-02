@@ -2,6 +2,7 @@
 #define ARRAYBUFFER_HPP
 
 #include <GL/glew.h>
+
 #include <vector>
 
 class ArrayBuffer
