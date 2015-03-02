@@ -6,7 +6,7 @@ void OpenGL::Construct()
 	GLenum glewstatus = glewInit();
 	if (glewstatus != GLEW_OK)
 		errorf((const char*)glewGetErrorString(glewstatus));
-	
+
 	initResources();
 }
 
@@ -16,9 +16,16 @@ void OpenGL::initResources()
 
 	std::vector<GLfloat> vertices;
 	for (int i = 0; i < 100; i++) {
-		const float x = (float)i/100.f;
-		vertices.push_back(x - 0.5f);
-		vertices.push_back(sinf(x*M_PI*2) - 0.5f);
+		float a = (float)i/100.f,
+			  x = a*2 - 1,
+			  y = sin(a*M_PI*2);
+		printf(" %d %d, %f %f\n",
+				x >= -.5 && x <= .5,
+				y >= -.5 && y <= .5,
+				x,
+				y);
+		vertices.push_back(x);
+		vertices.push_back(y);
 	}
 	vertex_buffer.Construct();
 	vertex_buffer.Upload(vertices);
@@ -39,7 +46,7 @@ void OpenGL::Draw()
 {
 	glClearColor(0, 0, 0, 1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawArrays(GL_LINES, 0, 100);
+	glDrawArrays(GL_LINE_STRIP, 0, 100);
 }
 
 GUI::GUI()
