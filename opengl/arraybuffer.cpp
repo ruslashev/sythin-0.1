@@ -11,7 +11,7 @@ void ArrayBuffer::Upload(std::vector<GLfloat> &data)
 	glBufferData(GL_ARRAY_BUFFER,
 			data.size()*sizeof(data[0]),
 			data.data(),
-			GL_STREAM_DRAW);
+			GL_DYNAMIC_DRAW);
 	Unbind();
 }
 

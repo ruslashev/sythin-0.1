@@ -9,6 +9,6 @@ out vec4 out_color;
 
 void main()
 {
-	out_color = frag_color * texture(gui_texture, frag_uv.st);
+	out_color = frag_color*texture(gui_texture, frag_uv.st);
 }
 

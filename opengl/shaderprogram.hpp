@@ -11,11 +11,10 @@
 
 class ShaderProgram
 {
-	GLint _proj_mat_unif, _texture_location;
-
 	void link(const Shader *vert, const Shader *frag);
 public:
 	GLuint id;
+	GLint proj_mat_unif, texture_location;
 
 	~ShaderProgram();
 

@@ -20,7 +20,6 @@ class OpenGL
 	Shader shader_vert, shader_frag;
 
 	void initResources();
-	void load_fonts();
 	void init_imgui();
 public:
 	ShaderProgram shader_program;
