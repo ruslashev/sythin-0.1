@@ -1,7 +1,7 @@
 CXX = clang++
-OBJS = $(patsubst %.cpp, .objs/%.o, $(shell find . -type f -name '*.cpp' ))
+OBJS = $(patsubst ./%.cpp, .objs/%.o, $(shell find . -type f -name '*.cpp' ))
 CXXFLAGS = -Wall -Werror -g -std=c++0x
-LDFLAGS = -lSDL2
+LDFLAGS = -lSDL2 -lGLEW -lGL
 EXECNAME = sythin
 
 all: objdir $(EXECNAME)
@@ -24,6 +24,7 @@ callgrind: objdir $(EXECNAME)
 
 objdir:
 	@mkdir -p .objs
+	@mkdir -p .objs/opengl
 
 clean:
 	-rm -f $(EXECNAME)
