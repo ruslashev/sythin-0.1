@@ -9,14 +9,6 @@ void OpenGL::Construct()
 	if (glewstatus != GLEW_OK)
 		errorf((const char*)glewGetErrorString(glewstatus));
 
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_SCISSOR_TEST);
-	glActiveTexture(GL_TEXTURE0);
-
 	initResources();
 	init_imgui();
 }
@@ -117,8 +109,7 @@ void imgui_render_draw_lists(ImDrawList** const cmd_lists, int count)
 
 	const float w = Window_Width; // alias & cast
 	const float h = Window_Height;
-	const glm::mat4 proj_ortho_mat =
-	{
+	const glm::mat4 proj_ortho_mat = {
 		{  2.f/w, 0.f,     0.f, 0.f },
 		{  0.f,   2.f/-h,  0.f, 0.f },
 		{  0.f,   0.f,    -1.f, 0.f },

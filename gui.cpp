@@ -28,6 +28,7 @@ void GUI::MainLoop()
 
 	while (!_quit) {
 		handleInput();
+
 		_new_time = SDL_GetTicks();
 		unsigned int time_difference = _new_time - _old_time;
 
@@ -40,7 +41,7 @@ void GUI::MainLoop()
 
 void GUI::handleInput()
 {
-	if (SDL_PollEvent(&_event)) {
+	while (SDL_PollEvent(&_event)) {
 		if (_event.type == SDL_QUIT)
 			_quit = true;
 		if (_event.type == SDL_KEYUP)
