@@ -10,11 +10,13 @@ void actual_main()
 	const int RequestedSamples = 4096;
 	AudioMaster audio_master(RequestedFrequency, RequestedSamples);
 
+	gui.audio_master = &audio_master;
 	gui.freq_req = RequestedFrequency;
 	gui.freq_obt = audio_master.Frequency;
 	gui.samples_req = RequestedSamples;
 	gui.samples_obt = audio_master.Samples;
 
+	audio_master.Unpause();
 	gui.MainLoop();
 }
 

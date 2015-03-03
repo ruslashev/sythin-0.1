@@ -18,7 +18,6 @@ GUI::GUI()
 	_gl_context = SDL_GL_CreateContext(_window);
 
 	_quit = false;
-	playing = false;
 
 	opengl.Construct();
 }
@@ -33,10 +32,10 @@ void GUI::handleInput()
 					_event.key.keysym.sym == SDLK_q)
 				_quit = true;
 			else if (_event.key.keysym.sym == SDLK_a)
-				playing = false;
+				audio_master->audio_waves[0].Playing = false;
 		} else if (_event.type == SDL_KEYDOWN)
 			if (_event.key.keysym.sym == SDLK_a)
-				playing = true;
+				audio_master->audio_waves[0].Playing = true;
 	}
 }
 
@@ -88,7 +87,7 @@ void GUI::Draw()
 	ImGui::Spacing();
 
 	ImVec4 color = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-	if (playing)
+	if (audio_master->audio_waves[0].Playing)
 		color = ImVec4(1., 0.6f, 0.6f, 1.00f);
 	ImGui::PushStyleColor(ImGuiCol_Text, color);
 	ImGui::Text("wave #1");

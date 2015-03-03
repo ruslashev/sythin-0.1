@@ -6,6 +6,7 @@
 
 #include "imgui/imgui.h"
 
+#include "audio_master.hpp"
 #include "opengl/arraybuffer.hpp"
 #include "opengl/vertexarray.hpp"
 #include "opengl/shader.hpp"
@@ -26,7 +27,7 @@ class GUI
 public:
 	unsigned int freq_req, freq_obt,
 				 samples_req, samples_obt;
-	bool playing;
+	AudioMaster *audio_master;
 
 	GUI();
 	~GUI();
