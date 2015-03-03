@@ -23,11 +23,8 @@ AudioMaster::AudioMaster(unsigned int requested_frequency,
 				"or couldn't set up the audio thread");
 	}
 
-	printf("Frequency requested: % 8d | Frequency obtained: % 8d\n",
-			requested.freq, obtained.freq);
-
-	printf("Samples requested: % 8d   | Samples obtained: % 8d\n",
-			requested.samples, obtained.samples);
+	// requested.freq, obtained.freq
+	// requested.samples, obtained.samples
 
 	SampleFrequency = obtained.freq;
 }

@@ -75,15 +75,8 @@ void OpenGL::Update(unsigned int dt, unsigned int t)
 
 void OpenGL::Draw()
 {
-	ImVec4 clear_col = ImColor(114, 144, 154);
-
-	bool shown = true;
-	ImGui::ShowTestWindow(&shown);
-
 	glViewport(0, 0, Window_Width, Window_Height);
-	glClearColor(clear_col.x, clear_col.y, clear_col.z, clear_col.w);
 	glClear(GL_COLOR_BUFFER_BIT);
-	ImGui::Render();
 }
 
 OpenGL::~OpenGL()

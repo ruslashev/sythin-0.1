@@ -4,6 +4,8 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
+#include "imgui/imgui.h"
+
 #include "opengl/arraybuffer.hpp"
 #include "opengl/vertexarray.hpp"
 #include "opengl/shader.hpp"
@@ -26,6 +28,7 @@ public:
 	~GUI();
 
 	void MainLoop();
+	void Draw();
 };
 
 #endif

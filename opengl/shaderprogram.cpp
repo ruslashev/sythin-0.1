@@ -8,9 +8,9 @@ void ShaderProgram::Construct(const Shader *vert, const Shader *frag)
 	UseThisProgram();
 	glBindFragDataLocation(id, 0, "out_color");
 
-	_texture_location = glGetUniformLocation(id, "gui_texture");
-	glUniform1i(_texture_location, 0);
-	_proj_mat_unif = glGetUniformLocation(id, "projection");
+	texture_location = glGetUniformLocation(id, "gui_texture");
+	glUniform1i(texture_location, 0);
+	proj_mat_unif = glGetUniformLocation(id, "projection");
 }
 
 void ShaderProgram::link(const Shader *vert, const Shader *frag)
@@ -70,7 +70,7 @@ void ShaderProgram::DontUseThisProgram()
 
 void ShaderProgram::UpdateMatrix(const glm::mat4 &proj)
 {
-	glUniformMatrix4fv(_proj_mat_unif, 1, GL_FALSE, glm::value_ptr(proj));
+	glUniformMatrix4fv(proj_mat_unif, 1, GL_FALSE, glm::value_ptr(proj));
 }
 
 ShaderProgram::~ShaderProgram()
