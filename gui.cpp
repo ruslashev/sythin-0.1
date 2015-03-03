@@ -18,6 +18,7 @@ GUI::GUI()
 	_gl_context = SDL_GL_CreateContext(_window);
 
 	_quit = false;
+	playing = false;
 
 	opengl.Construct();
 }
@@ -25,12 +26,17 @@ GUI::GUI()
 void GUI::handleInput()
 {
 	while (SDL_PollEvent(&_event)) {
-		if (_event.type == SDL_QUIT)
+		if (_event.type == SDL_QUIT) {
 			_quit = true;
-		if (_event.type == SDL_KEYUP)
+		} else if (_event.type == SDL_KEYUP) {
 			if (_event.key.keysym.sym == SDLK_ESCAPE ||
 					_event.key.keysym.sym == SDLK_q)
-			_quit = true;
+				_quit = true;
+			else if (_event.key.keysym.sym == SDLK_a)
+				playing = false;
+		} else if (_event.type == SDL_KEYDOWN)
+			if (_event.key.keysym.sym == SDLK_a)
+				playing = true;
 	}
 }
 
@@ -73,32 +79,20 @@ void GUI::Draw()
 
 	ImGui::Text("sythin");
 	ImGui::Spacing();
-
-	unsigned int freq_req = 123456,
-				 freq_obt = 123456,
-				 samp_req = 1234,
-				 samp_obt = 1234;
-	ImGui::BeginChild("column", ImVec2(ImGui::GetWindowWidth() * 2.f/3.f, 38));
-	ImGui::Columns(4, "requested-obtained", false);
-	ImGui::Text("Frequency requested");
-	ImGui::NextColumn();
-	ImGui::Text("%d", freq_req);
-	ImGui::NextColumn();
-	ImGui::Text("Samples requested");
-	ImGui::NextColumn();
-	ImGui::Text("%d", samp_req);
-	ImGui::NextColumn();
-	ImGui::Text("Frequency obtained");
-	ImGui::NextColumn();
-	ImGui::Text("%d", freq_obt);
-	ImGui::NextColumn();
-	ImGui::Text("Samples obtained");
-	ImGui::NextColumn();
-	ImGui::Text("%d", samp_obt);
-	ImGui::Columns(1);
-	ImGui::EndChild();
+	ImGui::Text("Frequency requested: %7d   Samples requested: %6d",
+			freq_req, samples_req);
+	ImGui::Text("Frequency obtained:  %7d   Samples obtained:  %6d",
+			freq_obt, samples_obt);
+	ImGui::Spacing();
 	ImGui::Separator();
+	ImGui::Spacing();
 
+	ImVec4 color = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+	if (playing)
+		color = ImVec4(1., 0.6f, 0.6f, 1.00f);
+	ImGui::PushStyleColor(ImGuiCol_Text, color);
+	ImGui::Text("wave #1");
+	ImGui::PopStyleColor();
 	static ImVector<float> values;
 	if (values.empty()) {
 		values.resize(100);
@@ -113,7 +107,8 @@ void GUI::Draw()
 		values_offset = (values_offset+1) % values.size();
 		phase += 0.10f*values_offset;
 	}
-	ImGui::PlotLines("", &values.front(), (int)values.size(), (int)values_offset, "wave #1 sine", -1.0f, 1.0f, ImVec2(0,80));
+	ImGui::SameLine();
+	ImGui::PlotLines("", &values.front(), (int)values.size(), (int)values_offset, "", -1.0f, 1.0f, ImVec2(0,50));
 
 	ImGui::End();
 

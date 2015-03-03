@@ -6,9 +6,14 @@ void actual_main()
 {
 	GUI gui;
 
-	const int RequestedFrequency = 100500;
+	const int RequestedFrequency = 44100;
 	const int RequestedSamples = 4096;
 	AudioMaster audio_master(RequestedFrequency, RequestedSamples);
+
+	gui.freq_req = RequestedFrequency;
+	gui.freq_obt = audio_master.Frequency;
+	gui.samples_req = RequestedSamples;
+	gui.samples_obt = audio_master.Samples;
 
 	gui.MainLoop();
 }

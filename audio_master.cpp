@@ -23,8 +23,8 @@ AudioMaster::AudioMaster(unsigned int requested_frequency,
 				"or couldn't set up the audio thread");
 	}
 
-	// requested.freq, obtained.freq
-	// requested.samples, obtained.samples
+	Frequency = obtained.freq;
+	Samples = obtained.samples;
 
 	SampleFrequency = obtained.freq;
 }

@@ -24,6 +24,10 @@ class GUI
 
 	void handleInput();
 public:
+	unsigned int freq_req, freq_obt,
+				 samples_req, samples_obt;
+	bool playing;
+
 	GUI();
 	~GUI();
 
