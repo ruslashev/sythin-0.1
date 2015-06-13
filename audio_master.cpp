@@ -1,7 +1,5 @@
 #include "audio_master.hpp"
 
-unsigned int SampleFrequency = 0;
-
 AudioMaster::AudioMaster(unsigned int requested_frequency,
 			unsigned int requested_samples)
 {
@@ -19,13 +17,11 @@ AudioMaster::AudioMaster(unsigned int requested_frequency,
 			"Failed to open the audio device "
 			"or couldn't set up the audio thread");
 
-	Frequency = obtained.freq;
+	SampleFrequency = obtained.freq;
 	Samples = obtained.samples;
 
-	// todo
-	SampleFrequency = obtained.freq;
-
-	audio_waves.push_back(AudioWave("sine wave", 1000, 150));
+	audio_waves.push_back(AudioWave(obtained.freq, "sine wave", 1000, 127));
+	audio_waves.push_back(AudioWave(obtained.freq, "sine wave low freq", 400, 1));
 }
 
 void AudioCallback(void *userdata, Uint8 *stream, int length)
@@ -37,6 +33,9 @@ void AudioCallback(void *userdata, Uint8 *stream, int length)
 			if (wave.Playing) {
 				value += wave.f();
 				wave.step();
+				wave.values.push_front(wave.f());
+				wave.values.pop_back();
+				printf("%d ", value);
 			}
 		}
 		if (value > 127)
@@ -47,20 +46,25 @@ void AudioCallback(void *userdata, Uint8 *stream, int length)
 	}
 }
 
-AudioWave::AudioWave(std::string nName, unsigned int nFrequency,
-		unsigned int nAmplitude)
+AudioWave::AudioWave(unsigned int SampleFrequency, std::string nName,
+		unsigned int nFrequency, unsigned int nAmplitude)
 {
 	Name = nName;
+	Phase = 0;
 	Frequency = nFrequency;
 	Amplitude = nAmplitude;
 	Playing = false;
+
+	values.resize(400);
+	for (int i = 0; i < 400; i++)
+		values[i] = 0;
 
 	_bytes_per_period = SampleFrequency / Frequency;
 }
 
 int AudioWave::f()
 {
-	return (int)(Amplitude*sin(Phase*2*M_PI / _bytes_per_period));
+	return Amplitude*sin(Phase*2*M_PI / _bytes_per_period);
 }
 
 void AudioWave::step()

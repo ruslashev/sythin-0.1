@@ -12,7 +12,7 @@ void actual_main()
 
 	gui.audio_master = &audio_master;
 	gui.freq_req = RequestedFrequency;
-	gui.freq_obt = audio_master.Frequency;
+	gui.freq_obt = audio_master.SampleFrequency;
 	gui.samples_req = RequestedSamples;
 	gui.samples_obt = audio_master.Samples;
 

@@ -5,6 +5,7 @@
 
 #include <string>
 #include <vector>
+#include <deque>
 
 #include "utils.hpp"
 
@@ -18,17 +19,19 @@ public:
 	unsigned int Amplitude;
 	bool Playing;
 
+	std::deque<int> values;
+
 	int f();
 	void step();
 
-	AudioWave(std::string nname, unsigned int nfrequency,
-			unsigned int namplitude);
+	AudioWave(unsigned int SampleFrequency, std::string nname,
+			unsigned int nfrequency, unsigned int namplitude);
 };
 
 class AudioMaster
 {
 public:
-	unsigned int Frequency;
+	unsigned int SampleFrequency;
 	unsigned int Samples;
 	std::vector<AudioWave> audio_waves;
 

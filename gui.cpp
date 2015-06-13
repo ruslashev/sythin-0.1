@@ -33,9 +33,14 @@ void GUI::handleInput()
 				_quit = true;
 			else if (_event.key.keysym.sym == SDLK_a)
 				audio_master->audio_waves[0].Playing = false;
-		} else if (_event.type == SDL_KEYDOWN)
+			else if (_event.key.keysym.sym == SDLK_s)
+				audio_master->audio_waves[1].Playing = false;
+		} else if (_event.type == SDL_KEYDOWN) {
 			if (_event.key.keysym.sym == SDLK_a)
 				audio_master->audio_waves[0].Playing = true;
+			else if (_event.key.keysym.sym == SDLK_s)
+				audio_master->audio_waves[1].Playing = true;
+		}
 	}
 }
 
@@ -76,8 +81,6 @@ void GUI::Draw()
 	ImGui::SetWindowPos(position);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
 
-	ImGui::Text("sythin");
-	ImGui::Spacing();
 	ImGui::Text("Frequency requested: %7d   Samples requested: %6d",
 			freq_req, samples_req);
 	ImGui::Text("Frequency obtained:  %7d   Samples obtained:  %6d",
@@ -86,32 +89,28 @@ void GUI::Draw()
 	ImGui::Separator();
 	ImGui::Spacing();
 
-	ImVec4 color = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
-	if (audio_master->audio_waves[0].Playing)
-		color = ImVec4(1., 0.6f, 0.6f, 1.00f);
-	ImGui::PushStyleColor(ImGuiCol_Text, color);
-	ImGui::Text("wave #1");
-	ImGui::PopStyleColor();
-	static ImVector<float> values;
-	if (values.empty()) {
-		values.resize(100);
-		memset(&values.front(), 0, values.size()*sizeof(float));
+	int i = 0;
+	for (auto &wave : audio_master->audio_waves) {
+		i++;
+		ImVec4 color = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+		if (wave.Playing)
+			color = ImVec4(1., 0.6f, 0.6f, 1.00f);
+		ImGui::PushStyleColor(ImGuiCol_Text, color);
+		ImGui::Text("wave #%d\n%s", i, wave.Name.c_str());
+		ImGui::PopStyleColor();
+
+		ImGui::SameLine();
+		float values[400];
+		int j = 0;
+		for (auto &v : wave.values) {
+			values[j] = v;
+			j++;
+		}
+		ImGui::PlotLines("",
+				values, 400, 0, "", -127, 127, ImVec2(0,90));
 	}
-	static size_t values_offset = 0;
-	static float last_time = -1.0f;
-	if (ImGui::GetTime() > last_time + 1.0f/60.0f) {
-		last_time = ImGui::GetTime();
-		static float phase = 0.0f;
-		values[values_offset] = cosf(phase);
-		values_offset = (values_offset+1) % values.size();
-		phase += 0.10f*values_offset;
-	}
-	ImGui::SameLine();
-	ImGui::PlotLines("", &values.front(), (int)values.size(), (int)values_offset, "", -1.0f, 1.0f, ImVec2(0,50));
 
 	ImGui::End();
-
-	ImGui::ShowTestWindow(&shown);
 
 	ImGui::Render();
 }
