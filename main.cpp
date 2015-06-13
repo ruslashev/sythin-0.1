@@ -11,10 +11,8 @@ void actual_main()
 	AudioMaster audio_master(RequestedSampleFrequency, RequestedSamples);
 
 	gui.audio_master = &audio_master;
-	gui.freq_req = RequestedSampleFrequency;
-	gui.freq_obt = audio_master.SampleFrequency;
-	gui.samples_req = RequestedSamples;
-	gui.samples_obt = audio_master.Samples;
+	gui.sampFreq = audio_master.SampleFrequency;
+	gui.samples = audio_master.Samples;
 
 	audio_master.Unpause();
 	gui.MainLoop();

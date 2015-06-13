@@ -21,10 +21,10 @@ public:
 	std::deque<int> values;
 
 	int f();
-	void step();
+	void Update();
 
-	Wave(unsigned int SampleFrequency, std::string nname,
-			unsigned int nfrequency);
+	Wave(unsigned int SampleFrequency, std::string nName,
+			unsigned int nFreq);
 };
 
 class AudioMaster

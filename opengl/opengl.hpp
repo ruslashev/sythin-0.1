@@ -6,8 +6,7 @@
 
 #include "arraybuffer.hpp"
 #include "vertexarray.hpp"
-#include "shader.hpp"
-#include "shaderprogram.hpp"
+#include "shaders.hpp"
 
 #include "../imgui/imgui.h"
 

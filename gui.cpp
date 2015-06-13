@@ -33,13 +33,11 @@ void GUI::handleInput()
 				_quit = true;
 			else if (_event.key.keysym.sym == SDLK_a)
 				audio_master->audio_waves[0].Playing = false;
-			else if (_event.key.keysym.sym == SDLK_s)
-				audio_master->audio_waves[1].Playing = false;
 		} else if (_event.type == SDL_KEYDOWN) {
 			if (_event.key.keysym.sym == SDLK_a)
 				audio_master->audio_waves[0].Playing = true;
-			else if (_event.key.keysym.sym == SDLK_s)
-				audio_master->audio_waves[1].Playing = true;
+				// audio_master->audio_waves[0].StopPlaying();
+				// audio_master->audio_waves[0].StartPlaying();
 		}
 	}
 }
@@ -81,10 +79,8 @@ void GUI::Draw()
 	ImGui::SetWindowPos(position);
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.0f);
 
-	ImGui::Text("Frequency requested: %7d   Samples requested: %6d",
-			freq_req, samples_req);
-	ImGui::Text("Frequency obtained:  %7d   Samples obtained:  %6d",
-			freq_obt, samples_obt);
+	ImGui::Text("Sample frequency: %d Samples: %d",
+			sampFreq, samples);
 	ImGui::Spacing();
 	ImGui::Separator();
 	ImGui::Spacing();

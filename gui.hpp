@@ -9,8 +9,7 @@
 #include "audio_master.hpp"
 #include "opengl/arraybuffer.hpp"
 #include "opengl/vertexarray.hpp"
-#include "opengl/shader.hpp"
-#include "opengl/shaderprogram.hpp"
+#include "opengl/shaders.hpp"
 #include "opengl/opengl.hpp"
 
 class GUI
@@ -24,8 +23,7 @@ class GUI
 
 	void handleInput();
 public:
-	unsigned int freq_req, freq_obt,
-				 samples_req, samples_obt;
+	unsigned int sampFreq, samples;
 	AudioMaster *audio_master;
 
 	GUI();
