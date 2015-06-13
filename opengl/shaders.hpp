@@ -1,13 +1,30 @@
-#ifndef SHADERPROGRAM_HPP
-#define SHADERPROGRAM_HPP
+#ifndef SHADERS_HPP
+#define SHADERS_HPP
 
 #include <GL/glew.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <string>
+#include <GL/glew.h>
 
-#include "shader.hpp"
 #include "arraybuffer.hpp"
+#include "../utils.hpp"
+
+class Shader
+{
+	std::string _src_filename;
+	std::string _debug_shader_type_str;
+
+	void source();
+	void compile();
+public:
+	GLuint id;
+
+	~Shader();
+
+	void Construct(std::string n_source_filename, GLuint type);
+};
 
 class ShaderProgram
 {
