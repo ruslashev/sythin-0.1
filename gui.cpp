@@ -55,7 +55,6 @@ void GUI::MainLoop()
 		unsigned int time_difference = new_time - old_time;
 
 		opengl.Update(time_difference, new_time);
-		opengl.Draw();
 		Draw();
 
 		SDL_GL_SwapWindow(_window);

@@ -10,7 +10,6 @@
 
 class Shader
 {
-	GLuint _type;
 	std::string _src_filename;
 	std::string _debug_shader_type_str;
 

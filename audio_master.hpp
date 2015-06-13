@@ -9,14 +9,13 @@
 
 #include "utils.hpp"
 
-class AudioWave
+class Wave
 {
 	unsigned int _bytes_per_period;
 public:
 	std::string Name;
 	unsigned int Phase;
 	unsigned int Frequency;
-	unsigned int Amplitude;
 	bool Playing;
 
 	std::deque<int> values;
@@ -24,8 +23,8 @@ public:
 	int f();
 	void step();
 
-	AudioWave(unsigned int SampleFrequency, std::string nname,
-			unsigned int nfrequency, unsigned int namplitude);
+	Wave(unsigned int SampleFrequency, std::string nname,
+			unsigned int nfrequency);
 };
 
 class AudioMaster
@@ -33,9 +32,9 @@ class AudioMaster
 public:
 	unsigned int SampleFrequency;
 	unsigned int Samples;
-	std::vector<AudioWave> audio_waves;
+	std::vector<Wave> audio_waves;
 
-	AudioMaster(unsigned int requested_frequency,
+	AudioMaster(unsigned int requested_samplefrequency,
 			unsigned int requested_samples);
 
 	void Pause() {

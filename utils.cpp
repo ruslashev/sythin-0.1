@@ -42,7 +42,7 @@ void warningf(const char *format, ...)
 File readFile(std::string path)
 {
 	std::ifstream ifs(path.c_str(), std::ifstream::binary);
-	assertf(ifs, "Failed to open file \"%s\" for reading.", path.c_str());
+	assertf(ifs.good(), "Failed to open file \"%s\" for reading.", path.c_str());
 
 	ifs.seekg(0, ifs.end);
 	const size_t filesize = ifs.tellg();
@@ -63,7 +63,7 @@ File readFile(std::string path)
 
 	int read = ifs.gcount();
 	double percent = 100.*read/(double)filesize;
-	assertf(ifs, "Only %d characters (%.2f%%) read from file \"%s\"",
+	assertf(ifs.good(), "Only %d characters (%.2f%%) read from file \"%s\"",
 			read, percent, path.c_str());
 
 	ifs.close();

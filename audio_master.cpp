@@ -1,11 +1,11 @@
 #include "audio_master.hpp"
 
-AudioMaster::AudioMaster(unsigned int requested_frequency,
+AudioMaster::AudioMaster(unsigned int requested_samplefrequency,
 			unsigned int requested_samples)
 {
 	SDL_AudioSpec requested, obtained;
 
-	requested.freq = requested_frequency;
+	requested.freq = requested_samplefrequency;
 	requested.format = AUDIO_S8;
 	requested.channels = 1;
 	requested.samples = requested_samples;
@@ -20,8 +20,7 @@ AudioMaster::AudioMaster(unsigned int requested_frequency,
 	SampleFrequency = obtained.freq;
 	Samples = obtained.samples;
 
-	audio_waves.push_back(AudioWave(obtained.freq, "sine wave", 1000, 127));
-	audio_waves.push_back(AudioWave(obtained.freq, "sine wave low freq", 400, 1));
+	audio_waves.push_back(Wave(obtained.freq, "Simple sine", 1000));
 }
 
 void AudioCallback(void *userdata, Uint8 *stream, int length)
@@ -36,6 +35,8 @@ void AudioCallback(void *userdata, Uint8 *stream, int length)
 				wave.values.push_front(wave.f());
 				wave.values.pop_back();
 				printf("%d ", value);
+			} else {
+				wave.Phase = 0;
 			}
 		}
 		if (value > 127)
@@ -46,13 +47,12 @@ void AudioCallback(void *userdata, Uint8 *stream, int length)
 	}
 }
 
-AudioWave::AudioWave(unsigned int SampleFrequency, std::string nName,
-		unsigned int nFrequency, unsigned int nAmplitude)
+Wave::Wave(unsigned int SampleFrequency, std::string nName,
+		unsigned int nFrequency)
 {
 	Name = nName;
 	Phase = 0;
 	Frequency = nFrequency;
-	Amplitude = nAmplitude;
 	Playing = false;
 
 	values.resize(400);
@@ -62,12 +62,12 @@ AudioWave::AudioWave(unsigned int SampleFrequency, std::string nName,
 	_bytes_per_period = SampleFrequency / Frequency;
 }
 
-int AudioWave::f()
+int Wave::f()
 {
-	return Amplitude*sin(Phase*2*M_PI / _bytes_per_period);
+	return 128*sin(Phase*2*M_PI / _bytes_per_period);
 }
 
-void AudioWave::step()
+void Wave::step()
 {
 	Phase++;
 	Phase %= _bytes_per_period;
