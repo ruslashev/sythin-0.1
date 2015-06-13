@@ -1,13 +1,12 @@
 #include "shader.hpp"
 
-void Shader::Construct(std::string n_src_filename, GLuint n_type)
+void Shader::Construct(std::string n_src_filename, GLuint type)
 {
 	_src_filename = n_src_filename;
-	_type = n_type;
 	_debug_shader_type_str =
-				_type == GL_VERTEX_SHADER ? "Vertex" : "Fragment";
+				type == GL_VERTEX_SHADER ? "Vertex" : "Fragment";
 
-	id = glCreateShader(_type);
+	id = glCreateShader(type);
 
 	source();
 

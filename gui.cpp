@@ -46,15 +46,15 @@ void GUI::handleInput()
 
 void GUI::MainLoop()
 {
-	_old_time = 0;
+	unsigned int old_time = 0, new_time;
 
 	while (!_quit) {
 		handleInput();
 
-		_new_time = SDL_GetTicks();
-		unsigned int time_difference = _new_time - _old_time;
+		new_time = SDL_GetTicks();
+		unsigned int time_difference = new_time - old_time;
 
-		opengl.Update(time_difference, _new_time);
+		opengl.Update(time_difference, new_time);
 		opengl.Draw();
 		Draw();
 
@@ -66,6 +66,7 @@ void GUI::Draw()
 {
 	ImVec4 clear_col = ImColor(222, 222, 222);
 	glClearColor(clear_col.x, clear_col.y, clear_col.z, 1);
+	glClear(GL_COLOR_BUFFER_BIT);
 
 	bool shown = true;
 

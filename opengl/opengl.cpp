@@ -11,6 +11,8 @@ void OpenGL::Construct()
 
 	initResources();
 	init_imgui();
+
+	glViewport(0, 0, Window_Width, Window_Height);
 }
 
 void OpenGL::initResources()
@@ -71,12 +73,6 @@ void OpenGL::Update(unsigned int dt, unsigned int t)
 	io.MouseDown[1] = !!(mouse_buttons & SDL_BUTTON(SDL_BUTTON_RIGHT));
 
 	ImGui::NewFrame();
-}
-
-void OpenGL::Draw()
-{
-	glViewport(0, 0, Window_Width, Window_Height);
-	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 OpenGL::~OpenGL()

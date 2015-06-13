@@ -19,7 +19,6 @@ class GUI
 	SDL_GLContext _gl_context;
 	SDL_Event _event;
 	bool _quit;
-	unsigned int _old_time, _new_time;
 
 	OpenGL opengl;
 

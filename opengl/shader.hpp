@@ -21,7 +21,7 @@ public:
 
 	~Shader();
 
-	void Construct(std::string n_source_filename, GLuint n_type);
+	void Construct(std::string n_source_filename, GLuint type);
 };
 
 #endif

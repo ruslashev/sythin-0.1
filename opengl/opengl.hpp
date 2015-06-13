@@ -29,7 +29,6 @@ public:
 
 	void Construct();
 	void Update(unsigned int dt, unsigned int t);
-	void Draw();
 };
 
 void imgui_render_draw_lists(ImDrawList** const cmd_lists, int count);
