@@ -7,7 +7,7 @@ sythin is a work-in-progress audio synthesizer.
 ### credits
 
 * SDL http://libsdl.org/
- * SDL\_audio http://sdl.beuc.net/sdl.wiki/SDL\_Audio
+* SDL\_audio http://sdl.beuc.net/sdl.wiki/SDL_Audio
 * ImGui https://github.com/ocornut/imgui
 * GLEW http://glew.sourceforge.net/
 
